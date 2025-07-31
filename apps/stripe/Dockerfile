@@ -1,19 +1,19 @@
-# syntax = docker/dockerfile:1
-ARG NODE_VERSION=22.9.0
-FROM node:${NODE_VERSION}-slim AS base
+FROM node:20-slim AS base
 WORKDIR /app
-RUN npm install -g pnpm@8.12.0
+RUN corepack enable pnpm
+
+FROM base AS deps
+COPY pnpm-lock.yaml package.json ./
+RUN pnpm fetch --frozen-lockfile
+RUN pnpm install --frozen-lockfile --prod
 
 FROM base AS build
-ENV NODE_ENV=production
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile --prod=false
 COPY . .
-RUN SECRET_KEY='dummy' pnpm run build
-RUN pnpm prune --prod
+RUN pnpm run build
 
 FROM base AS runner
-WORKDIR /app
-COPY --from=build /app /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=build /app/.next .next
+COPY package.json ./
 EXPOSE 3000
-CMD ["pnpm", "run", "start"]
+CMD ["pnpm", "start"]
