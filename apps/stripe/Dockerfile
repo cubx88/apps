@@ -1,19 +1,38 @@
-FROM node:20-slim AS base
+# syntax=docker/dockerfile:1
+
+## Build stage
+FROM node:20-alpine AS builder
+
 WORKDIR /app
-RUN corepack enable pnpm
+# Copy root-level monorepo dependencies if needed
+COPY package.json pnpm-lock.yaml ./
+# Install pnpm globally
+RUN npm install -g pnpm@latest
 
-FROM base AS deps
-COPY pnpm-lock.yaml package.json ./
-RUN pnpm fetch --frozen-lockfile
-RUN pnpm install --frozen-lockfile --prod
-
-FROM base AS build
+# Install dependencies
 COPY . .
-RUN pnpm run build
+RUN pnpm install
 
-FROM base AS runner
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=build /app/.next .next
-COPY package.json ./
+# Build the app (Next.js)
+RUN pnpm build
+
+## Production stage
+FROM node:20-alpine AS runtime
+
+WORKDIR /app
+ENV NODE_ENV=production
+
+# Copy production dependencies + app
+COPY --from=builder /app/package.json /app/pnpm-lock.yaml ./
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/public ./public
+
 EXPOSE 3000
-CMD ["pnpm", "start"]
+ENV PORT=3000
+
+ENV SECRET_KEY="OsFCtFRfOfDcF7989457177!!!"
+ENV APL="FileAPL"
+ENV APP_DEBUG="info"
+
+CMD ["node_modules/.bin/next", "start"]
