@@ -1,16 +1,19 @@
-FROM node:20-alpine AS builder
+# syntax = docker/dockerfile:1
+ARG NODE_VERSION=22.9.0
+FROM node:${NODE_VERSION}-slim AS base
 WORKDIR /app
-COPY package.json ./
-RUN npm install -g pnpm && pnpm install
-COPY . .
-RUN pnpm build
+RUN npm install -g pnpm@8.12.0
 
-FROM node:20-alpine AS runner
-WORKDIR /app
-COPY --from=builder /app/.next ./
-COPY --from=builder /app/public ./public
-COPY package.json ./
-RUN npm install -g pnpm && pnpm install --prod
-EXPOSE 3000
+FROM base AS build
 ENV NODE_ENV=production
-CMD ["pnpm", "start"]
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --prod=false
+COPY . .
+RUN SECRET_KEY='dummy' pnpm run build
+RUN pnpm prune --prod
+
+FROM base AS runner
+WORKDIR /app
+COPY --from=build /app /app
+EXPOSE 3000
+CMD ["pnpm", "run", "start"]
