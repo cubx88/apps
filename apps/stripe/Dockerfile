@@ -1,10 +1,9 @@
 # syntax=docker/dockerfile:1.5
 ARG NODE_MAJOR=22
 FROM node:${NODE_MAJOR}-alpine AS base
-
-# Force BuildKit to invalidate cache if we bump NODE_MAJOR
 LABEL node_version=${NODE_MAJOR}
 
+# --- env tweaks to bypass DynamoDB checks --------------------------
 ENV APL=file \
     SKIP_ENV_VALIDATION=true \
     DYNAMODB_MAIN_TABLE_NAME=dummy \
@@ -13,17 +12,14 @@ ENV APL=file \
     AWS_SECRET_ACCESS_KEY=dummy
 
 WORKDIR /app
+
+# ----- copy lock & manifest first to cache deps layer ---------------
 COPY package.json pnpm-lock.yaml ./
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@10.6.3 --activate     # pin pnpm
+RUN pnpm install --frozen-lockfile      # or --no-frozen-lockfile (see Option B)
 
-# --- install deps in an isolated layer ------------------------------
-RUN pnpm install --frozen-lockfile
-RUN pnpm install --no-frozen-lockfile
-
-# copy the rest of the source *after* deps are cached
+# ----- copy the rest and build just the Stripe workspace -----------
 COPY . .
-
-# build only the Stripe workspace (skip the rest of the monorepo)
 RUN pnpm turbo run build --filter=saleor-app-payment-stripe --only
 
 EXPOSE 3000
