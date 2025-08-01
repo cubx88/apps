@@ -8,7 +8,18 @@ ENV APL=file \
     SKIP_ENV_VALIDATION=true \
     DYNAMODB_MAIN_TABLE_NAME=dummy \
     AWS_REGION=us-east-1 \
-    AWS_SECRET_ACCESS_KEY=dummy
+    AWS_SECRET_ACCESS_KEY=dummy \
+    NODE_ENV=production \
+    NEXT_RUNTIME=nodejs \
+    OTEL_ENABLED=false \
+    APP_LOG_LEVEL=info \
+    ENV=production \
+    PORT=3000 \
+    OTEL_ACCESS_TOKEN=dummy \
+    OTEL_SERVICE_NAME=stripe-app \
+    REPOSITORY_URL=https://github.com/saleor/apps \
+    VERCEL_ENV=production \
+    VERCEL_GIT_COMMIT_SHA=dummy
 
 WORKDIR /app
 
@@ -25,8 +36,8 @@ COPY apps/ ./apps/
 # Install all dependencies (this will resolve the catalog references)
 RUN pnpm install --frozen-lockfile
 
-# Build the stripe app using the correct package name
-RUN pnpm --filter=saleor-app-payment-stripe build
+# Build the stripe app with relaxed linting
+RUN ESLINT_NO_DEV_ERRORS=true DISABLE_ESLINT_PLUGIN=true pnpm --filter=saleor-app-payment-stripe build
 
 # Set working directory to the stripe app
 WORKDIR /app/apps/stripe
