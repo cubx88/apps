@@ -1,7 +1,7 @@
 # -----------------------
 # Stage 1: Build
 # -----------------------
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
@@ -23,7 +23,7 @@ RUN pnpm build
 # -----------------------
 # Stage 2: Runtime
 # -----------------------
-FROM node:20-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 ENV NODE_ENV=production
