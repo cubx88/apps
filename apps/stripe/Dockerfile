@@ -12,7 +12,7 @@ COPY ../../package.json ../../pnpm-lock.yaml ./
 RUN npm install -g pnpm@latest
 
 # Install only production dependencies
-RUN pnpm install --prod --ignore-workspace-root-check
+#RUN pnpm install --prod --ignore-workspace-root-check
 
 # Copy the Stripe app source code
 COPY . .
