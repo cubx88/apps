@@ -25,15 +25,9 @@ COPY apps/ ./apps/
 # Install all dependencies (this will resolve the catalog references)
 RUN pnpm install --frozen-lockfile
 
-# Modify Next.js config to completely skip ESLint during build
-RUN cd apps/stripe && \
-    echo 'const nextConfig = { eslint: { ignoreDuringBuilds: true }, typescript: { ignoreBuildErrors: true } }; module.exports = nextConfig;' > next.config.js
-
-# Build the stripe app
-RUN pnpm --filter=saleor-app-payment-stripe build
-
 # Set working directory to the stripe app
 WORKDIR /app/apps/stripe
 
 EXPOSE 3000
-CMD ["pnpm", "start"]
+# Run in development mode instead of building
+CMD ["pnpm", "dev"]
