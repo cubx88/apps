@@ -1,5 +1,4 @@
-FROM node:20-alpine
-# Make env variables available at build-time too
+FROM node:23-alpine
 ENV APL=file \
     SKIP_ENV_VALIDATION=true \
     DYNAMODB_MAIN_TABLE_NAME=dummy \
