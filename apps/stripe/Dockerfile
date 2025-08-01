@@ -15,7 +15,7 @@ WORKDIR /app
 
 # 1️⃣ copy only manifest & lockfile to build the deps layer
 COPY package.json pnpm-lock.yaml ./
-RUN corepack enable && corepack prepare pnpm@10.6.3 --activate
+RUN corepack enable && corepack prepare pnpm@10.14.0 --activate
 # Use --no-frozen-lockfile to allow lockfile updates
 RUN pnpm install --no-frozen-lockfile
 
