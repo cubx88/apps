@@ -3,7 +3,7 @@ ARG NODE_MAJOR=22
 FROM node:${NODE_MAJOR}-alpine AS base
 LABEL node_version=${NODE_MAJOR}
 
-# --- env tweaks to bypass DynamoDB checks --------------------------
+# Stop DynamoDB checks
 ENV APL=file \
     SKIP_ENV_VALIDATION=true \
     DYNAMODB_MAIN_TABLE_NAME=dummy \
@@ -13,12 +13,12 @@ ENV APL=file \
 
 WORKDIR /app
 
-# ----- copy lock & manifest first to cache deps layer ---------------
+# cache deps layer
 COPY package.json pnpm-lock.yaml ./
-RUN corepack enable && corepack prepare pnpm@10.6.3 --activate     # pin pnpm
-RUN pnpm install --frozen-lockfile      # or --no-frozen-lockfile (see Option B)
+RUN corepack enable && corepack prepare pnpm@10.6.3 --activate
+RUN pnpm install --frozen-lockfile        # ✅ now succeeds
 
-# ----- copy the rest and build just the Stripe workspace -----------
+# copy sources & build only the Stripe package
 COPY . .
 RUN pnpm turbo run build --filter=saleor-app-payment-stripe --only
 
