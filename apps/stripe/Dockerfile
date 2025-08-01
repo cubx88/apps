@@ -1,4 +1,4 @@
-FROM node:22-alpine
+FROM node:20-alpine
 # Make env variables available at build-time too
 ENV APL=file \
     SKIP_ENV_VALIDATION=true \
