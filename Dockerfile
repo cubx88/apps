@@ -12,22 +12,20 @@ ENV APL=file \
 
 WORKDIR /app
 
-# Enable corepack and use the same pnpm version as specified in package.json
 RUN corepack enable && corepack use pnpm@10.6.3
 
-# Copy workspace configuration files
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
-
-# Copy all necessary packages and apps
 COPY packages/ ./packages/
 COPY apps/ ./apps/
 
-# Install all dependencies (this will resolve the catalog references)
 RUN pnpm install --frozen-lockfile
 
-# Set working directory to the stripe app
 WORKDIR /app/apps/stripe
 
+# <---- This line builds your Next.js app for production
+RUN pnpm build
+
 EXPOSE 3000
-# Run in development mode instead of building
-CMD ["pnpm", "dev"]
+
+# <---- This line runs the optimized, production server!
+CMD ["pnpm", "start"]
