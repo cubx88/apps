@@ -36,7 +36,16 @@
     "VERCEL_ENV",
     "VERCEL_GIT_COMMIT_SHA",
     "VERCEL_URL",
-    "VERCEL"
+    "VERCEL",
+    "ALLOWED_DOMAIN_PATTERN",
+    "MANIFEST_APP_ID",
+    "STRIPE_PARTNER_ID",
+    "DYNAMODB_MAIN_TABLE_NAME",
+    "AWS_REGION",
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+    "APPSTORE_URL",
+    "APP_NAME"
   ],
   "tasks": {
     "topo": {
