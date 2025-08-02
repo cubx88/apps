@@ -1,13 +1,27 @@
 {
   "$schema": "https://turbo.build/schema.v2.json",
-  "globalDependencies": ["**/.env.*local"],
+  "globalDependencies": [
+    "**/.env.*local"
+  ],
   "globalEnv": [
+    "STRIPE_SECRET_KEY",
+    "STRIPE_PUBLISHABLE_KEY",
+    "STRIPE_WEBHOOK_SECRET_KEY",
+    "APP_URL",
+    "SALEOR_API_URL",
+    "APL",
+    "APP_DEBUG",
+    "SECRET_KEY",
+    "HOST",
+    "PORT",
+    "APP_IFRAME_BASE_URL",
+    "APP_API_BASE_URL",
+    "NEXT_PUBLIC_SALEOR_API_URL",
     "APP_LOG_LEVEL",
     "CI",
     "ENABLE_EXPERIMENTAL_COREPACK",
     "ENV",
     "GITHUB_SHA",
-    "NEXT_RUNTIME",
     "NEXT_RUNTIME",
     "NODE_ENV",
     "OTEL_ACCESS_TOKEN",
@@ -17,7 +31,6 @@
     "OTEL_SERVICE_NAME",
     "OTEL_TRACES_SAMPLER_ARG",
     "OTEL_TRACES_SAMPLER",
-    "PORT",
     "REPOSITORY_URL",
     "SENTRY_ORG",
     "VERCEL_ENV",
@@ -27,38 +40,73 @@
   ],
   "tasks": {
     "topo": {
-      "dependsOn": ["^topo"]
+      "dependsOn": [
+        "^topo"
+      ]
     },
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", ".vercel/**", "!.next/cache/**"],
-      "inputs": ["$TURBO_DEFAULT$", ".env"]
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**",
+        ".vercel/**",
+        "!.next/cache/**"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env"
+      ]
     },
     "check-types": {
-      "dependsOn": ["topo"]
+      "dependsOn": [
+        "topo"
+      ]
     },
     "deploy": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", ".vercel/**", "!.next/cache/**"],
-      "inputs": ["$TURBO_DEFAULT$", ".env"]
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**",
+        ".vercel/**",
+        "!.next/cache/**"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env"
+      ]
     },
     "dev": {
-      "dependsOn": ["^dev"],
+      "dependsOn": [
+        "^dev"
+      ],
       "cache": false,
       "persistent": true
     },
     "generate": {
-      "dependsOn": ["topo"],
-      "outputs": ["generated/**"]
+      "dependsOn": [
+        "topo"
+      ],
+      "outputs": [
+        "generated/**"
+      ]
     },
     "lint": {
-      "dependsOn": ["topo"]
+      "dependsOn": [
+        "topo"
+      ]
     },
     "lint:fix": {
-      "dependsOn": ["topo"]
+      "dependsOn": [
+        "topo"
+      ]
     },
     "start": {
-      "dependsOn": ["^build", "^start"],
+      "dependsOn": [
+        "^build",
+        "^start"
+      ],
       "cache": false,
       "persistent": true
     },
@@ -67,9 +115,18 @@
       "persistent": true
     },
     "test:ci": {
-      "dependsOn": ["topo"],
-      "inputs": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/**/*.spec.ts", "src/**/*.spec.tsx"],
-      "outputs": ["coverage/**"]
+      "dependsOn": [
+        "topo"
+      ],
+      "inputs": [
+        "src/**/*.test.ts",
+        "src/**/*.test.tsx",
+        "src/**/*.spec.ts",
+        "src/**/*.spec.tsx"
+      ],
+      "outputs": [
+        "coverage/**"
+      ]
     }
   }
 }
