@@ -40,7 +40,7 @@ const handler = createManifestHandler({
       permissions: ["HANDLE_PAYMENTS"],
       requiredSaleorVersion: ">=3.21 <4",
       supportUrl: "https://saleor.io/discord",
-      //tokenTargetUrl: `${apiBaseUrl}/api/register`,
+      tokenTargetUrl: "",//`${apiBaseUrl}/api/register`,
       version: packageJson.version,
       webhooks: [
         paymentGatewayInitializeSessionWebhookDefinition.getWebhookManifest(apiBaseUrl),
